@@ -1,14 +1,13 @@
-import 'package:http/http.dart';
+
 import 'package:basic_utils/basic_utils.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 
-Future<List<String>> getLinks(website) async{
+Future<List<String>> getLinks(website,response) async{
   List<String> scrappedLinks = [];
 
-  // Creating a new connection
-  var client = Client();
-  Response response = await client.get(website);
+
+  print (response.statusCode);
   // Html parser
   var document = parse(response.body);
   // Getting all 'a' tags.
@@ -33,6 +32,7 @@ Future<List<String>> getLinks(website) async{
   return uniqueLinks;
 }
 
+// NOT WORKING YET
 void getDivs(document, website) {
   List<String> scrappedLinks = [];
   document.getElementById('div').forEach((Element link) {
@@ -43,20 +43,12 @@ void getDivs(document, website) {
         !link.attributes['href'].startsWith('java') &&
         !link.attributes['href'].startsWith('{{')) {
       if (!link.attributes['href'].startsWith('http')) {
-//                  print("The link before fixing : ${link.attributes['href']}");
         String fixedLink =
         StringUtils.addCharAtPosition(link.attributes['href'], website, 0);
-//                  print ("The link after fix : $fixedLink");
-//                  print(fixedLink);
         scrappedLinks.add(fixedLink);
       } else {
-//                  print (link.attributes['href']);
         scrappedLinks.add(link.attributes['href']);
       }
-//                linkMap.add({
-//                  'title': link.text,
-//                  'href': link.attributes['href'],
-//                });
     }
   });
   // Setting to SET to get unique links
