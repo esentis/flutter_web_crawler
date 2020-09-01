@@ -1,6 +1,5 @@
 import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_link_preview/flutter_link_preview.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -9,7 +8,7 @@ import 'crawler.dart';
 
 Future<List<String>> futureLinks;
 String website = '';
-String helperMessage = "Specify target url and start sniffing !";
+String helperMessage = 'Specify target url and start sniffing !';
 bool _loading = false;
 
 class UserInterface extends StatefulWidget {
@@ -27,7 +26,7 @@ class _UserInterfaceState extends State<UserInterface> {
           child: Center(
             child: Column(
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 25,
                 ),
                 Padding(
@@ -38,20 +37,20 @@ class _UserInterfaceState extends State<UserInterface> {
                         child: TextFormField(
                           decoration: InputDecoration(
                             labelText: 'Target url',
-                            prefix: Text("https://"),
+                            prefix: const Text('https://'),
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(20)),
                           ),
                           onChanged: (value) {
-                            print(value);
-                            String fixedLink = StringUtils.addCharAtPosition(
+                            logger.i(value);
+                            var fixedLink = StringUtils.addCharAtPosition(
                                 value, 'https://', 0);
 
                             website = fixedLink;
                           },
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 15,
                       ),
                       GestureDetector(
@@ -62,28 +61,28 @@ class _UserInterfaceState extends State<UserInterface> {
                           var client = Client();
 
                           try {
-                            Response response = await client.get(website);
-                            print(response.statusCode);
-                            futureLinks = getLinks(website, response);
-                            print(futureLinks);
+                            var response = await client.get(website);
+                            futureLinks = getH2s(website, response);
                             _loading = false;
                             setState(() {});
-                          }catch (e){
-                            print(e.toString());
-                            helperMessage=e.toString();
+                          } catch (e) {
+                            helperMessage = e.toString();
+                            logger.e(e);
                             _loading = false;
                             setState(() {});
                           }
-
                         },
                         child: Material(
                           elevation: 15,
-                          shadowColor: _loading == true ? Colors.red : Colors.lightGreen[900],
+                          shadowColor: _loading == true
+                              ? Colors.red
+                              : Colors.lightGreen[900],
                           color: Colors.transparent,
                           child: Icon(
                             FontAwesome5.spider,
-                            color:
-                                _loading == true ? Colors.red : Colors.lightGreen[900],
+                            color: _loading == true
+                                ? Colors.red
+                                : Colors.lightGreen[900],
                             size: 60,
                           ),
                         ),
@@ -91,7 +90,7 @@ class _UserInterfaceState extends State<UserInterface> {
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 30,
                 ),
                 FutureBuilder(
@@ -100,19 +99,16 @@ class _UserInterfaceState extends State<UserInterface> {
                     if (snapshot.hasData) {
                       return Expanded(
                         child: ListView.builder(
-                            padding: EdgeInsets.only(right: 20, top: 30),
+                            padding: const EdgeInsets.only(right: 20, top: 30),
                             itemCount: snapshot.data.length,
                             itemBuilder: (BuildContext ctxt, int index) {
                               return ListTile(
                                 leading: Text(
-                                  "URL",
+                                  'URL',
                                   style:
                                       GoogleFonts.comfortaa(color: Colors.red),
                                 ),
                                 title: Text(snapshot.data[index]),
-                                subtitle: FlutterLinkPreview(
-                                  url: snapshot.data[index],
-                                ),
                               );
                             }),
                       );
